@@ -1,0 +1,12 @@
+{
+    "gopls": {
+        "ui.diagnostic.analyses": {
+            "fieldalignment": false,
+        },
+    },
+    "extensions.ignoreRecommendations": true,
+    "go.diagnostic.vulncheck": "Imports",
+    "git.branchProtection": [
+        "main"
+    ],
+}

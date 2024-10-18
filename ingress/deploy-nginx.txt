@@ -1,0 +1,5 @@
+# install
+helm install my-nginx-ingress nginx-stable/nginx-ingress
+
+# verify instalation
+kubectl get pods -l app.kubernetes.io/name=nginx-ingress

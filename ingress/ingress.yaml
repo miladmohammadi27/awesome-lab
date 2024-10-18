@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway-ingress
+  namespace: development
+spec:
+  rules:
+    # - host: example.com
+    - http:
+        paths:
+          - path: /mirror
+            pathType: Prefix
+            backend:
+              service:
+                name: project-service
+                port:
+                  number: 9091

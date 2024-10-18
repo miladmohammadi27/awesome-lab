@@ -1,0 +1,16 @@
+# list context 
+kubectl config get-contexts
+
+
+# change 
+kubectl config use-context another-cluster
+
+
+# verify 
+kubectl config current-context
+
+
+# change namespace
+kubectl config set-context --current --namespace=development
+
+
