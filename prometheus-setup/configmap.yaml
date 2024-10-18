@@ -9,6 +9,9 @@ data:
   prometheus.yml: |
     global:
       scrape_interval: 15s
+      external_labels:
+        cluster: "cluster-two" 
+        region: "us-east"   
     scrape_configs:
       - job_name: 'project'
         scheme: http

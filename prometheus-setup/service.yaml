@@ -14,20 +14,3 @@ spec:
   selector:
     app: prometheus
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: prometheus-nodeport-service
-  namespace: monitoring
-  labels:
-    app: prometheus
-spec:
-  type: NodePort
-  ports:
-    - name: web
-      port: 9090
-      targetPort: 9090
-      nodePort: 31002
-  selector:
-    app: prometheus

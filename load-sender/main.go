@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"sync"
+	"time"
 )
 
 const (
 	url            = "http://localhost:9092/mirror?message=HelloWorld"
-	requestCount   = 1000 // Total number of requests to send
-	goroutineCount = 4    // Number of goroutines
+	requestCount   = 100000 // Total number of requests to send
+	goroutineCount = 4      // Number of goroutines
 )
 
 func sendRequest(wg *sync.WaitGroup, start int) {
@@ -22,6 +23,7 @@ func sendRequest(wg *sync.WaitGroup, start int) {
 		}
 		resp.Body.Close() // Close the response body to avoid resource leaks
 		fmt.Printf("Request %d sent...\n", i)
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
