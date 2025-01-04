@@ -16,6 +16,7 @@ spec:
       containers:
       - name: project
         image: miladmohammadi27/project:latest
+        # imagePullPolicy: Always # Set image pull policy to always
         ports:
         - containerPort: 9090 # Application port
         - containerPort: 9095 # Metrics port

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -20,9 +22,20 @@ var mirrorRequestsTotal = prometheus.NewCounterVec(
 	[]string{"status"},
 )
 
+// Define a histogram to measure response times
+var mirrorRequestDuration = prometheus.NewHistogramVec(
+	prometheus.HistogramOpts{
+		Name:    "mirror_request_duration_seconds",
+		Help:    "Histogram of request durations for mirror handler",
+		Buckets: prometheus.DefBuckets, // Use default bucket values
+	},
+	[]string{"status"},
+)
+
 func init() {
-	// Register the metric with Prometheus
+	// Register the metrics with Prometheus
 	prometheus.MustRegister(mirrorRequestsTotal)
+	prometheus.MustRegister(mirrorRequestDuration)
 }
 
 func main() {
@@ -49,27 +62,39 @@ func main() {
 }
 
 func mirrorHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Received request")
+	start := time.Now() // Record the start time
+
+	// Introduce a random wait (simulate processing time)
+	time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
+
 	// Get the 'message' query parameter
 	message := r.URL.Query().Get("message")
 
+	status := "success"
 	if message == "" {
+		status = "failed"
 		// Increment the counter for failed requests
-		mirrorRequestsTotal.WithLabelValues("failed").Inc()
+		mirrorRequestsTotal.WithLabelValues(status).Inc()
 
 		// If no 'message' parameter is provided, return a default response
 		http.Error(w, "Please provide a message query parameter", http.StatusBadRequest)
-		return
+	} else {
+		// Increment the counter for successful requests
+		mirrorRequestsTotal.WithLabelValues(status).Inc()
+
+		// Create a response object
+		response := map[string]string{"mirrored_message": message}
+
+		// Set the content type to application/json
+		w.Header().Set("Content-Type", "application/json")
+
+		// Write the JSON response
+		json.NewEncoder(w).Encode(response)
 	}
 
-	// Increment the counter for successful requests
-	mirrorRequestsTotal.WithLabelValues("success").Inc()
-
-	// Create a response object
-	response := map[string]string{"mirrored_message": message}
-
-	// Set the content type to application/json
-	w.Header().Set("Content-Type", "application/json")
-
-	// Write the JSON response
-	json.NewEncoder(w).Encode(response)
+	// Measure the request duration and observe it in the histogram
+	duration := time.Since(start).Seconds()
+	mirrorRequestDuration.WithLabelValues(status).Observe(duration)
+	fmt.Println("Request duration:", duration)
 }
