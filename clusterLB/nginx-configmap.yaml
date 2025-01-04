@@ -6,8 +6,8 @@ data:
   nginx.conf: |
     http {
         upstream backend {
-            server cluster-one-control-plane:30001 weight=50;  # 70% of the traffic
-            server cluster-two-control-plane:30001 weight=50;  # 30% of the traffic
+            server cluster-one-control-plane:30001 weight=50;  # 50% of the traffic
+            server cluster-two-control-plane:30001 weight=50;  # 50% of the traffic
         }
 
         server {
